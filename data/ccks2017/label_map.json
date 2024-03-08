@@ -1,0 +1,16 @@
+[
+    {
+        "0": "BODY",
+        "1": "SIGNS",
+        "2": "DISEASE",
+        "3": "TREATMENT",
+        "4": "CHECK"
+    },
+    {
+        "BODY": 0,
+        "SIGNS": 1,
+        "DISEASE": 2,
+        "TREATMENT": 3,
+        "CHECK": 4
+    }
+]

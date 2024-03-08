@@ -1,0 +1,7 @@
+torch
+bertviz
+transformers
+prefetch-generator
+tqdm
+pathlib
+six
