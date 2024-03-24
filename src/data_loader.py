@@ -325,6 +325,28 @@ class NerDataProcessor(DataProcessor):
             offset_dict[token_end] = token_idx
         return offset_dict
 
+    def build_output_results(self, tokens, infers, goldens):
+        outputs = []
+        for batch_idx, (token, seq_infers) in enumerate(zip(tokens, infers)):
+            text = self.tokenizer.decode(token, skip_special_tokens=True)
+            infer_list = [{'text': self.tokenizer.decode(token[infer.start_idx:infer.end_idx+1]),
+                           'event_type':self.id2label[infer.label_id]} for infer in seq_infers]
+            outputs.append({
+                'text': text,
+                'event_list_infer': infer_list
+            })
+            if goldens is not None:
+                join_set = set(goldens[batch_idx]) & set(seq_infers)
+                lack = set(goldens[batch_idx]) - join_set
+                new = set(seq_infers) - join_set
+                outputs[-1]['event_list_golden'] = [{'text': self.tokenizer.decode(token[item.start_idx:item.end_idx+1]),
+                                                     'event_type':self.id2label[item.label_id]} for item in goldens[batch_idx]]
+                outputs[-1]['lack'] = [{'text': self.tokenizer.decode(token[item.start_idx:item.end_idx+1]),
+                                        'event_type':self.id2label[item.label_id]} for item in lack]
+                outputs[-1]['new'] = [{'text': self.tokenizer.decode(token[item.start_idx:item.end_idx+1]),
+                                       'event_type':self.id2label[item.label_id]} for item in new]
+        return outputs
+
     def convert_examples_to_feature(self, input_file, data_type):
         features = []
         stat_info = {'entity_cnt': 0, 'max_token_len': 0}
